@@ -1,0 +1,50 @@
+.TH HSH 1 "December 2025" "Simple Shell" "User Commands"
+.SH NAME
+hsh \- our final project for the sprint! - a simple UNIX command interpreter.
+.SH SYNOPSIS
+.B hsh
+.RI [ options ]
+.SH DESCRIPTION
+.B hsh
+is a minimal command-line interpreter implemented as a learning project.
+It reads commands from standard input and executes them using the system PATH.
+
+This shell supports basic command execution and a small set of built-ins.
+.SH OPTIONS
+This shell currently accepts no command-line options.
+.SH BUILTINS
+.TP
+.B exit
+Exit the shell.
+.TP
+.B env
+Print the current environment.
+.SH USAGE
+Run the shell and enter commands at the prompt:
+
+.nf
+$ ./hsh
+$ ls -l
+$ echo "hello"
+.fi
+.SH RETURN VALUE
+Returns 0 on normal exit. Errors return a non-zero value where applicable.
+.SH ERRORS
+Error messages are written to standard error.
+.SH ENVIRONMENT
+.TP
+.B PATH
+Used to locate executable commands.
+.SH FILES
+None.
+.SH EXAMPLES
+.nf
+$ ./hsh
+$ pwd
+$ env
+.fi
+.SH AUTHORS
+Written by Andrew Kasapidis.
+.SH BUGS
+This shell is intentionally minimal and does not support advanced features
+such as pipes, redirection, or job control. We're only in verion 0.1!
