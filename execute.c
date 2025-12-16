@@ -14,7 +14,6 @@ void run_command(char *path, char **tokens)
 	if (pid == 0)
 	{
 		execve(path, tokens, environ);
-		perror(tokens[0]);
 		exit(1);
 	}
 	else if (pid > 0)
@@ -27,16 +26,20 @@ void run_command(char *path, char **tokens)
  * search_path - searches the path for command, and runs it
  * @cmd: the command
  * @tokens: our tokens
+ * @prog: program name
+ * @count: cmd count
  */
 
-void search_path(char *cmd, char **tokens)
+void search_path(char *cmd, char **tokens, char *prog, int count)
 {
 	char *path = getenv("PATH"), *copy, *dir;
 	char full_path[1024];
+if (!prog)
+return;
 
 	if (!path)
 	{
-		fprintf(stderr, "%s: command not found\n", cmd);
+		fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
 		return;
 	}
 	copy = strdup(path);
@@ -56,28 +59,34 @@ void search_path(char *cmd, char **tokens)
 		}
 	}
 	free(copy);
-	fprintf(stderr, "%s: command not found\n", cmd);
+  fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
 }
 
 /**
  * execute - main execute function, handles external commands & forks & execve
  * @tokens: our tokens
+ * @prog: program name
+ * @count: cmd count
  */
 
-void execute(char **tokens)
+void execute(char **tokens, char *prog, int count)
 {
 	char *cmd = tokens[0];
 
-	if (!cmd)
+	if (!cmd || !prog)
 		return;
 
 	if (strchr(cmd, '/'))
 	{
-		if (access(cmd, X_OK) == -1)
-			perror(cmd);
-		else
-			run_command(cmd, tokens);
+
+		 if (access(cmd, X_OK) == -1)
+        {
+            fprintf(stderr, "%s: %d: %s: not found\n",
+                    prog, count, cmd);
+            return;
+        }
+        run_command(cmd, tokens);
 		return;
 	}
-	search_path(cmd, tokens);
+	search_path(cmd, tokens, prog, count);
 }

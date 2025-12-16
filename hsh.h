@@ -13,9 +13,9 @@ extern char **environ;
 
 char *read_input(FILE *stream);
 char **parse(char *input);
-void execute(char **tokens);
+void execute(char **tokens, char *prog, int count);
 void run_command(char *path, char **tokens);
-void search_path(char *cmd, char **tokens);
+void search_path(char *cmd, char **tokens, char *prog, int count);
 
 
 /*TO DO*/

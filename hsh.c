@@ -74,6 +74,11 @@ int main(int argc, char **argv, char **envp)
 	int running = 1, interactive; /*booleans*/
 	char *input = NULL; /*line buffer*/
 	char **tokens = NULL; /*token array*/
+	int count = 0; /*Track command count*/
+
+/*ignore unused parameter*/
+(void)argc; 
+(void)envp;
 
 	interactive = isatty(STDIN_FILENO);
 	while (running)
@@ -86,27 +91,20 @@ int main(int argc, char **argv, char **envp)
 		}
 		/*Read one whole line of input*/
 		input = read_input(stdin);
-		if (input == NULL)
-			break; /*EOF or error*/
+		if (!input)
+		{
+break; /*EOF or error*/
+		}
+			
+			count++;
 		/*Split line into tokens*/
 		tokens = parse(input);
 		/*Decide what we do with said tokens*/
-		if (tokens[0] != NULL)
-		{
-			if (strcmp(tokens[0], "exit") == 0)
-				running = 0;
-			/*Built-in: exit shell*/
-			else if (strcmp(tokens[0], "cd") == 0)
-			{
-				do_cd(tokens); /*built in: change directory*/
-			}
-			else if (strcmp(tokens[0], "env") == 0)
-			{
-				print_env(envp); /*built in: env*/
-			}
-			else
-				execute(tokens); /*external commands via fork/exevec */
-		}
+		if (tokens && tokens[0])
+{
+    execute(tokens, argv[0], count);
+}
+
 		free(tokens);
 		free(input);
 	}
