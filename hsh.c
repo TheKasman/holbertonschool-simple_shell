@@ -63,75 +63,6 @@ char *read_input(FILE *stream)
 }
 
 /**
- * execute - handles external commands & forks & execve
- * @tokens: tokens
- * Return: no return
- */
-void execute(char **tokens)
-{
-  pid_t pid;
-  int status;
-  char *cmd = tokens[0];
-  char *path, *path_copy, *dir;
-  char full_path[1024];
-  /* command has '/' */
-  if (strchr(cmd, '/') != NULL)
-    {
-      if (access(cmd, X_OK) == -1)
-	{
-	  perror(cmd);
-	  return;
-	}
-      pid = fork();
-      if (pid == 0)
-	{
-	  execve(cmd, tokens, environ);
-	  perror(cmd);
-	  exit(1);
-	}
-      else
-	{
-	  wait(&status);
-	  return;
-	}
-    }
-  /* searching PATH */
-  path = getenv("PATH");
-  if (path == NULL)
-    {
-      fprintf(stderr, "%s: command not found\n", cmd);
-      return;
-    }
-  path_copy = strdup(path);
-  if (path_copy == NULL)
-    return;
-  dir = strtok(path_copy, ":");
-  while (dir != NULL)
-    {
-      snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
-      if (access(full_path, X_OK) == 0)
-	{
-	  pid = fork();
-	  if (pid == 0)
-	    {
-	      execve(full_path, tokens, environ);
-	      perror(cmd);
-	      exit(1);
-	    }
-	  else
-	    {
-	      wait(&status);
-	      free(path_copy);
-	      return;
-	    }
-	}
-      dir = strtok(NULL, ":");
-    }
-  free(path_copy);
-  fprintf(stderr, "%s: command not found\n", cmd);
-}
-
-/**
  * * main - main function
  * @argc: argument counter
  * @argv: argument vector
@@ -143,7 +74,6 @@ int main(int argc, char **argv, char **envp)
 	int running = 1, interactive; /*booleans*/
 	char *input = NULL; /*line buffer*/
 	char **tokens = NULL; /*token array*/
-	/*both pointers are nulled so we don't get undefined behavior*/
 
 	interactive = isatty(STDIN_FILENO);
 	while (running)
@@ -164,23 +94,19 @@ int main(int argc, char **argv, char **envp)
 		if (tokens[0] != NULL)
 		{
 			if (strcmp(tokens[0], "exit") == 0)
-			  running = 0;
-			    /*Built-in: exit shell*/
+				running = 0;
+			/*Built-in: exit shell*/
 			else if (strcmp(tokens[0], "cd") == 0)
 			{
 				do_cd(tokens); /*built in: change directory*/
 			}
 			else if (strcmp(tokens[0], "env") == 0)
-			  {
-			    print_env(envp); /*built in: env*/
-			  }
+			{
+				print_env(envp); /*built in: env*/
+			}
 			else
 				execute(tokens); /*external commands via fork/exevec */
 		}
-		/*
-		 * if we ever get command history, tokens needs to be freed
-		 * independently (while loop). Don't worry about that for now
-		 */
 		free(tokens);
 		free(input);
 	}
