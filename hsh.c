@@ -76,9 +76,9 @@ int main(int argc, char **argv, char **envp)
 	char **tokens = NULL; /*token array*/
 	int count = 0; /*Track command count*/
 
-/*ignore unused parameter*/
-(void)argc; 
-(void)envp;
+	/*ignore unused parameter*/
+	(void)argc;
+	(void)envp;
 
 	interactive = isatty(STDIN_FILENO);
 	while (running)
@@ -93,18 +93,17 @@ int main(int argc, char **argv, char **envp)
 		input = read_input(stdin);
 		if (!input)
 		{
-break; /*EOF or error*/
+			break; /*EOF or error*/
 		}
-			
+
 			count++;
 		/*Split line into tokens*/
 		tokens = parse(input);
 		/*Decide what we do with said tokens*/
 		if (tokens && tokens[0])
-{
-    execute(tokens, argv[0], count);
-}
-
+		{
+			execute(tokens, argv[0], count);
+		}
 		free(tokens);
 		free(input);
 	}

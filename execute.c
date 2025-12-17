@@ -34,8 +34,9 @@ void search_path(char *cmd, char **tokens, char *prog, int count)
 {
 	char *path = getenv("PATH"), *copy, *dir;
 	char full_path[1024];
-if (!prog)
-return;
+
+	if (!prog)
+		return;
 
 	if (!path)
 	{
@@ -59,7 +60,7 @@ return;
 		}
 	}
 	free(copy);
-  fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
+	fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
 }
 
 /**
@@ -78,14 +79,12 @@ void execute(char **tokens, char *prog, int count)
 
 	if (strchr(cmd, '/'))
 	{
-
-		 if (access(cmd, X_OK) == -1)
-        {
-            fprintf(stderr, "%s: %d: %s: not found\n",
-                    prog, count, cmd);
-            return;
-        }
-        run_command(cmd, tokens);
+		if (access(cmd, X_OK) == -1)
+		{
+			fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
+			return;
+		}
+		run_command(cmd, tokens);
 		return;
 	}
 	search_path(cmd, tokens, prog, count);
