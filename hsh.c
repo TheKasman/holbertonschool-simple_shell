@@ -108,5 +108,5 @@ int main(int argc, char **argv, char **envp)
 		free(tokens);
 		free(input);
 	}
-	return (0);
+	return (last_status);
 }
