@@ -22,6 +22,24 @@ char *get_env_var(const char *name)
 }
 
 /**
+ * print_env - Prints all environment variable per line
+ */
+void print_env(void)
+{
+	int i = 0;
+
+	if (!environ)
+		return;
+
+	while (environ[i])
+	{
+		write(STDOUT_FILENO, environ[i], strlen(environ[i]));
+		write(STDOUT_FILENO, "\n", 1);
+		i++;
+	}
+}
+
+/**
  * run_command - a helper function to run the command at a given path
  * @path: the path
  * @tokens: our tokens
@@ -106,7 +124,6 @@ int execute(char **tokens, char *prog, int count, int *last_status)
 		*last_status = status;
 		return (status);
 	}
-
 	if (strchr(cmd, '/'))
 	{
 		if (access(cmd, X_OK) == -1)

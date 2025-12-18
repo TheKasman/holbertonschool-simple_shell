@@ -102,9 +102,17 @@ int main(int argc, char **argv, char **envp)
 		tokens = parse(input);
 		/*Decide what we do with said tokens*/
 		if (tokens && tokens[0])
-		{
-			execute(tokens, argv[0], count, &last_status);
-		}
+{
+	if (strcmp(tokens[0], "env") == 0)
+	{
+		print_env();
+		last_status = 0;
+	}
+	else
+	{
+		execute(tokens, argv[0], count, &last_status);
+	}
+}
 		free(tokens);
 		free(input);
 	}
