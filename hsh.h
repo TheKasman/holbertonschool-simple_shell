@@ -15,7 +15,7 @@ char *read_input(FILE *stream);
 char **parse(char *input);
 void execute(char **tokens, char *prog, int count);
 void run_command(char *path, char **tokens);
-void search_path(char *cmd, char **tokens, char *prog, int count);
+int search_path(char *cmd, char **tokens, char *prog, int count);
 char *get_env_var(const char *name);
 
 /*TO DO*/

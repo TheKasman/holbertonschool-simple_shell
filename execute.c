@@ -51,22 +51,22 @@ void run_command(char *path, char **tokens)
  * @count: cmd count
  */
 
-void search_path(char *cmd, char **tokens, char *prog, int count)
+int search_path(char *cmd, char **tokens, char *prog, int count)
 {
 	char *path = get_env_var("PATH"), *copy, *dir;
 	char full_path[1024];
 
 	if (!prog)
-		return;
+		return (1);
 
 	if (!path)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
-		exit(127);
+		return (127); /*command not found*/
 	}
 	copy = strdup(path);
 	if (!copy)
-		return;
+		return (1);
 
 	for (dir = strtok(copy, ":"); dir; dir = strtok(NULL, ":"))
 	{
@@ -77,12 +77,12 @@ void search_path(char *cmd, char **tokens, char *prog, int count)
 		{
 			run_command(full_path, tokens);
 			free(copy);
-			return;
+			return (0); /*we did it!*/
 		}
 	}
 	free(copy);
 	fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
-	exit(127);
+	return (127);
 }
 
 /**
@@ -95,6 +95,7 @@ void search_path(char *cmd, char **tokens, char *prog, int count)
 void execute(char **tokens, char *prog, int count)
 {
 	char *cmd = tokens[0];
+	int status; /*consumes return from search_path*/
 
 	if (!cmd || !prog)
 		return;
@@ -104,10 +105,12 @@ void execute(char **tokens, char *prog, int count)
 		if (access(cmd, X_OK) == -1)
 		{
 			fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
-			return;
+			status = 127;
 		}
 		run_command(cmd, tokens);
-		return;
+		status = 0;
 	}
-	search_path(cmd, tokens, prog, count);
+	status = search_path(cmd, tokens, prog, count);
+
+	/*optional for later: last_status = status*/
 }
