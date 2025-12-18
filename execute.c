@@ -1,6 +1,27 @@
 #include "hsh.h"
 
 /**
+ * get_env_var - gets the environment variable (our way to bypass getenv)
+ * @name: the object to receive variables from
+ * Return: returns the environment varibles
+ */
+
+char get_env_var(char *name)
+{
+	int i;
+	size_t len = strlen(name);
+
+	for (i = 0; i < environ[i]; i++)
+	{
+		if (strncmp(environ[i], name, len) == 0 && environ[i][len] == "=")
+		{
+			return (environ[i] + len + 1);
+		}
+	}
+	return (NULL);
+}
+
+/**
  * run_command - a helper function to run the command at a given path
  * @path: the path
  * @tokens: our tokens
@@ -32,7 +53,7 @@ void run_command(char *path, char **tokens)
 
 void search_path(char *cmd, char **tokens, char *prog, int count)
 {
-	char *path = getenv("PATH"), *copy, *dir;
+	char *path = get_env_var("PATH"), *copy, *dir;
 	char full_path[1024];
 
 	if (!prog)
