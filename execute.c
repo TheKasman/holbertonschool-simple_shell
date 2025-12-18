@@ -62,7 +62,7 @@ void search_path(char *cmd, char **tokens, char *prog, int count)
 	if (!path)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
-		return;
+		exit(127);
 	}
 	copy = strdup(path);
 	if (!copy)
@@ -82,6 +82,7 @@ void search_path(char *cmd, char **tokens, char *prog, int count)
 	}
 	free(copy);
 	fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
+	exit(127);
 }
 
 /**
