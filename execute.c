@@ -107,10 +107,14 @@ void execute(char **tokens, char *prog, int count)
 			fprintf(stderr, "%s: %d: %s: not found\n", prog, count, cmd);
 			status = 127;
 		}
-		run_command(cmd, tokens);
-		status = 0;
+		else
+		{
+			run_command(cmd, tokens);
+			status = 0;
+		}
 	}
-	status = search_path(cmd, tokens, prog, count);
+	else
+		status = search_path(cmd, tokens, prog, count);
 
 	/*optional for later: last_status = status*/
 }
