@@ -43,9 +43,10 @@ void print_env(void)
  * run_command - a helper function to run the command at a given path
  * @path: the path
  * @tokens: our tokens
+ * Return: returns the correct exitstatus for the child
  */
 
-void run_command(char *path, char **tokens)
+int run_command(char *path, char **tokens)
 {
 	pid_t pid = fork();
 	int status;
@@ -53,12 +54,21 @@ void run_command(char *path, char **tokens)
 	if (pid == 0)
 	{
 		execve(path, tokens, environ);
-		exit(1);
+		perror("execve");
+		exit(127);
 	}
 	else if (pid > 0)
+	{
 		waitpid(pid, &status, 0);
+
+		if (WIFEXITED(status))
+			return (WEXITSTATUS(status));
+		else if (WIFSIGNALED(status))
+			return (128 + WTERMSIG(status));
+	}
 	else
 		perror("fork");
+	return (1);
 }
 
 /**
@@ -74,6 +84,7 @@ int search_path(char *cmd, char **tokens, char *prog, int count)
 {
 	char *path = get_env_var("PATH"), *copy, *dir;
 	char full_path[1024];
+	int status;
 
 	if (!prog)
 		return (1);
@@ -94,9 +105,9 @@ int search_path(char *cmd, char **tokens, char *prog, int count)
 		snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
 		if (access(full_path, X_OK) == 0)
 		{
-			run_command(full_path, tokens);
+			status = run_command(full_path, tokens);
 			free(copy);
-			return (0); /*we did it!*/
+			return (status); /*we did it!*/
 		}
 	}
 	free(copy);
@@ -120,9 +131,8 @@ int execute(char **tokens, char *prog, int count, int *last_status)
 
 	if (!cmd || !prog)
 	{
-		status = 127;
-		*last_status = status;
-		return (status);
+		*last_status = 127;
+		return (127);
 	}
 	if (strchr(cmd, '/'))
 	{
@@ -133,9 +143,9 @@ int execute(char **tokens, char *prog, int count, int *last_status)
 		}
 		else
 		{
-			run_command(cmd, tokens);
-			status = 0;
+			status = run_command(cmd, tokens);
 		}
+		*last_status = status;
 	}
 	else
 	{
