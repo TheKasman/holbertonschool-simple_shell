@@ -104,7 +104,7 @@ int main(int argc, char **argv, char **envp)
 			else if (strcmp(tokens[0], "exit") == 0)
 			{
 				running = 0;
-				last_status = 0; }
+				last_status = 2; }
 			else
 				execute(tokens, argv[0], count, &last_status); }
 	free(tokens);
