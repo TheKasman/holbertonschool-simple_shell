@@ -90,11 +90,9 @@ int main(int argc, char **argv, char **envp)
 			printf("$ ");
 			fflush(stdout);
 		}
-		/*Read one whole line of input*/
-		input = read_input(stdin);
+		input = read_input(stdin); /*Read one whole line of input*/
 		if (!input)
 			break; /*EOF or error*/
-
 		count++;
 		/*Split line into tokens, then do something with them*/
 		tokens = parse(input);
@@ -103,9 +101,12 @@ int main(int argc, char **argv, char **envp)
 			if (strcmp(tokens[0], "env") == 0)
 			{	print_env();
 				last_status = 0; }
+			else if (strcmp(tokenjs[0], "exit") == 0)
+			{
+				running = 0;
+				last_status = 0; }
 			else
-				execute(tokens, argv[0], count, &last_status);
-		}
+				execute(tokens, argv[0], count, &last_status); }
 	free(tokens);
 	free(input);
 	}
