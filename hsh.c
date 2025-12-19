@@ -93,28 +93,21 @@ int main(int argc, char **argv, char **envp)
 		/*Read one whole line of input*/
 		input = read_input(stdin);
 		if (!input)
-		{
 			break; /*EOF or error*/
-		}
 
-			count++;
-		/*Split line into tokens*/
+		count++;
+		/*Split line into tokens, then do something with them*/
 		tokens = parse(input);
-		/*Decide what we do with said tokens*/
 		if (tokens && tokens[0])
-{
-	if (strcmp(tokens[0], "env") == 0)
-	{
-		print_env();
-		last_status = 0;
-	}
-	else
-	{
-		execute(tokens, argv[0], count, &last_status);
-	}
-}
-		free(tokens);
-		free(input);
+		{
+			if (strcmp(tokens[0], "env") == 0)
+			{	print_env();
+				last_status = 0; }
+			else
+				execute(tokens, argv[0], count, &last_status);
+		}
+	free(tokens);
+	free(input);
 	}
 	return (last_status);
 }

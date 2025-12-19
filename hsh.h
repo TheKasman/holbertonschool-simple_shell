@@ -23,6 +23,5 @@ void print_env(void);
 
 /*TO DO*/
 void do_cd(char **tokens);
-/*void print_env(char **envp);*/
 
 #endif
