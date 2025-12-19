@@ -19,7 +19,7 @@ void run_command(char *path, char **tokens);
 int search_path(char *cmd, char **tokens, char *prog, int count);
 char *get_env_var(const char *name);
 void print_env(void);
-
+void shell_cleanup(char *input, char **tokens);
 
 /*TO DO*/
 void do_cd(char **tokens);

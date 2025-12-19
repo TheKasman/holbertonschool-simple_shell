@@ -3,6 +3,20 @@
 #define MAX_TOKENS 64 /*maximum number of command arguments*/
 
 /**
+ * shell_cleanup - cleans up the shell so we can exit safely
+ * @input: the input string
+ * @tokens: the tokenated string
+ */
+
+void shell_cleanup(char *input, char **tokens)
+{
+	if (tokens)
+		free(tokens);
+	if (input)
+		free(input);
+}
+
+/**
  * **parse - parses the input stream from read_input into usable content
  * @input: self explanatory.. it's the input.
  * Return: returns the input as separate tokens
@@ -84,8 +98,7 @@ int main(int argc, char **argv, char **envp)
 	interactive = isatty(STDIN_FILENO);
 	while (running)
 	{
-		/*only happens when we directly type into terminal*/
-		if (interactive)
+		if (interactive) /*only happens when we directly type into terminal*/
 		{
 			printf("$ ");
 			fflush(stdout);
@@ -104,7 +117,8 @@ int main(int argc, char **argv, char **envp)
 			else if (strcmp(tokens[0], "exit") == 0)
 			{
 				running = 0;
-				last_status = 2; }
+				shell_cleanup(input, tokens);
+				exit(last_status); }
 			else
 				execute(tokens, argv[0], count, &last_status); }
 	free(tokens);
